@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <div class="row">
+        <div class="col-4 offset-4">
+            <div class="form-group">
+                <label>Select Country</label>
+                <select id="ddlcountry" class="form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Select State</label>
+                <select id="ddlstate" class="form-control">
+                    
+                    <option value="">Select</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Select City</label>
+                <select id="ddlcity" class="form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        getCountries();
+        $("#ddlcountry").change(function () {
+            var id = $("#ddlcountry").val();
+            getStates(id);
+            $("#ddlcity").empty();
+            $("#ddlcity").append($("<option>Select</option>").val('').html('Select City'));
+
+ })
+        $("#ddlstate").change(function () {
+            $("#ddlcity").empty(); // Clear the please wait  
+            $("#ddlcity").append($("<option>Select</option>").val('').html('Select City'));
+            var id = $("#ddlstate").val()
+            getCities(id);
+        })
+    })
+    function getCountries() {
+        
+        $.get('@Url.Action("GetCountries", "Home")', function (result) {
+
+           // console.log(result)
+            var mySelect = $("#ddlcountry");
+            $.each(result, function (index, item) {
+                console.log(item)
+                mySelect.append(
+                    $("<option>Select</option>").val(item.id).html(item.countryName)
+                );
+               // $("#ddlcountry").append(`<options value="${item.id}">${item.countryName}</options>`);
+            })
+        })
+    }
+    function getStates(countryid) {
+        
+        $.get('@Url.Action("GetStates", "Home")', { id: countryid }, function (result) {
+
+           // console.log(result)
+            $("#ddlstate").empty(); // Clear the please wait  
+            $("#ddlstate").append($("<option>Select</option>").val('').html('Select State'));
+            var mySelect = $("#ddlstate");
+            $.each(result, function (index, item) {
+               // console.log(item)
+                mySelect.append(
+                    $("<option>Select</option>").val(item.id).html(item.stateName)
+                );
+               // $("#ddlcountry").append(`<options value="${item.id}">${item.stateName}</options>`);
+            })
+        })
+    }
+    function getCities(stateid) {
+        
+        $.get('@Url.Action("GetCities", "Home")', {id: stateid}, function (result) {
+
+           // console.log(result
+           
+            var mySelect = $('#ddlcity');
+            $.each(result, function (index, item) {
+               // console.log(item)
+                mySelect.append(
+                    $('<option>Select</option>').val(item.id).html(item.cityName)
+                );
+               // $("#ddlcountry").append("<options value="+item.id+">'"+ item.countryName+"'</options>")
+            })
+        })
+    }
+</script>
